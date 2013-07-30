@@ -1,4 +1,6 @@
 <?php
+//FIXME:
+//How to gurantee the char-set is UTF-8 when query_str passed by the form ?
 $query_str = isset($_POST['query_str']) ? $_POST['query_str'] : '';
 echo "query_str:" . $query_str;
 if (empty($query_str))
@@ -32,11 +34,7 @@ else
 
     if (!SocketWrite($socket, $data))
         PrintSocketError("Socket Write error:", $socket);
-
-    while($recv_data = socket_read($socket, 1024, PHP_NORMAL_READ))
-    {
-        echo "recv_data:" . $recv_data;
-    }
+    ReadQueryResult($socket);
 }
 
 function PrintSocketError($error_title, $socket)
@@ -45,6 +43,39 @@ function PrintSocketError($error_title, $socket)
     $errormsg = socket_strerror($errorcode);
 
     die($error_title . "[$errorcode] $errormsg");
+}
+
+function ReadQueryResult($socket)
+{
+    while(true)
+    {
+    $cmd = GetLine($socket);
+    $datalen = GetLine($socket);
+    $arg1 = GetLine($socket);
+    $arg2 = GetLine($socket);
+    $arg3 = GetLine($socket);
+    $data_body = GetData($socket, $datalen);
+    echo "<p>";
+    echo "<h1>id:" . $arg2 . "</h1>";
+    echo "<h2><a href = '$data_body' target='_blank'>url:" . $data_body . "</a></h2>";
+    echo "</p>";
+    }
+}
+
+function GetLine($socket)
+{
+    $temp_data = socket_read($socket, 1024, PHP_NORMAL_READ);
+    if (!$temp_data)
+        PrintSocketError($socket);
+    return $temp_data;
+}
+
+function GetData($socket, $datalen)
+{
+    $temp_data = socket_read($socket, $datalen, PHP_BINARY_READ);
+    if (!$temp_data)
+        PrintSocketError($socket);
+    return $temp_data;
 }
 
 function SocketWrite($sock, $msg)
