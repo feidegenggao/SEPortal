@@ -35,6 +35,9 @@ else
     if (!SocketWrite($socket, $data))
         PrintSocketError("Socket Write error:", $socket);
     ReadQueryResult($socket);
+    $bye_words = "Bye";
+    if (!SocketWrite($socket, $bye_words))
+        PrintSocketError("Socket Write error:", $socket);
 }
 
 function PrintSocketError($error_title, $socket)
@@ -71,6 +74,10 @@ function ReadQueryResult($socket)
         else
         {
             die("Can't Anlysis the commond");
+        }
+        if ($arg1 == $arg2)
+        {
+            return;
         }
     }
 }
