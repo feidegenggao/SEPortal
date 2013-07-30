@@ -49,16 +49,29 @@ function ReadQueryResult($socket)
 {
     while(true)
     {
-    $cmd = GetLine($socket);
-    $datalen = GetLine($socket);
-    $arg1 = GetLine($socket);
-    $arg2 = GetLine($socket);
-    $arg3 = GetLine($socket);
-    $data_body = GetData($socket, $datalen);
-    echo "<p>";
-    echo "<h1>id:" . $arg2 . "</h1>";
-    echo "<h2><a href = '$data_body' target='_blank'>url:" . $data_body . "</a></h2>";
-    echo "</p>";
+        $cmd = GetLine($socket);
+        $datalen = GetLine($socket);
+        $arg1 = GetLine($socket);
+        $arg2 = GetLine($socket);
+        $arg3 = GetLine($socket);
+
+        $PORTAL_SEARCH_QUERY_OK = 2;
+        if ($cmd == $PORTAL_SEARCH_QUERY_OK)
+        {
+            $title = GetLine($socket);
+            $url = GetLine($socket);
+            $summary = GetLine($socket);
+
+            echo "<p>";
+            echo "<h1><a href = '$url' target='_blank'>" . $title. "</a></h1>";
+            echo "<h2>" . $summary. "</h2>";
+            echo "<h3>" . $url. "</h3>";
+            echo "</p>";
+        }
+        else
+        {
+            die("Can't Anlysis the commond");
+        }
     }
 }
 
