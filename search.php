@@ -88,6 +88,10 @@ function ReadQueryResult($socket)
         }
         else
         {
+            $bye_words = "Bye\n";
+            if (!SocketWrite($socket, $bye_words))
+                PrintSocketError("Socket Write error:", $socket);
+
             echo "<p style='color:red'> Result is Empty</p>";
             die("Can't Anlysis the commond");
         }
