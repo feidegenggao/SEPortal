@@ -1,8 +1,15 @@
 <?php
+echo "<style type='text/css'>";
+echo "em{color:#dd4b39;font-style:normal;font-weight:normal;}
+.resultstats{color:#999;font-size:13px;}
+.content{width:512px;margin-bottom:20px;}
+.title{font-size:medium;font-weight:normal;}
+.url{color:blue;margin-bottom:10px;}
+.summary{font-size:small;}";
+echo "</style>";
 //FIXME:
 //How to gurantee the char-set is UTF-8 when query_str passed by the form ?
 $query_str = isset($_POST['query_str']) ? $_POST['query_str'] : '';
-echo "query_str:" . $query_str;
 if (empty($query_str))
 {
     exit('Please input query string');
@@ -50,6 +57,8 @@ function PrintSocketError($error_title, $socket)
 
 function ReadQueryResult($socket)
 {
+    echo "<ol>";
+    $show_result_num = false;
     while(true)
     {
         $cmd = GetLine($socket);
@@ -65,11 +74,17 @@ function ReadQueryResult($socket)
             $url = GetLine($socket);
             $summary = GetLine($socket);
 
-            echo "<p>";
-            echo "<h1><a href = '$url' target='_blank'>" . $title. "</a></h1>";
-            echo "<h2>" . $summary. "</h2>";
-            echo "<h3>" . $url. "</h3>";
-            echo "</p>";
+            if (!$show_result_num)
+            {
+                echo "<div class='resultstats'>共找到约" . $arg1 . "个结果</div>";
+                $show_result_num = true;
+            }
+
+            echo "<li><div class='content'>";
+            echo "<div class='title'><a href = '$url' target='_blank'>" . $title. "</a></div>";
+            echo "<div class='url'>" . $url. "</div>";
+            echo "<div class='summary'>" . $summary. "</div>";
+            echo "</div></li>";
         }
         else
         {
